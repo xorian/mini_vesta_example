@@ -1,0 +1,34 @@
+from /vesta/test1.xorian.net/platforms/linux/debian/amd64/components import
+  component_models = [
+    "libgtest-dev"/"1.7.0-3"/checkout/1/1,
+  ];
+
+{
+  /**nocache**/
+  lib_closure(lib_func: function)()
+  // Provide a simple way to generate something which acts like a
+  // model in a traditional Vesta library package.  This makes it
+  // possible to override it and use it with the "walk_libs" function.
+  {
+    return [ lib = lib_func ];
+  };
+
+  /**nocache**/
+  lib_gtest()
+  // The gtest library
+  {
+    root = ./build_root(<"libgtest-dev">);
+    headers = root/usr/include;
+    priv_headers = [ src = root/usr/src/gtest/src,
+ 		     gtest = root/usr/include/gtest ];
+    src = [ "gtest-all.cc" = root/usr/src/gtest/src/"gtest-all.cc" ];
+    ovs = [ Cxx/options/thread_safe = TRUE ];
+    ovs ++= [ Cxx/switches/compile/I_cwd = "-I." ];
+    return ./Cxx/leaf("libgtest.a", src, headers, priv_headers, ovs);
+  };
+
+  return [
+    component_models,
+    libs/cxx = [ gtest = lib_closure(lib_gtest) ],
+  ];
+}

@@ -1,0 +1,44 @@
+import
+  self = build.ves;
+  libgtest = libgtest.ves;
+
+// Import the standard build environment for this platform.
+from /vesta/test1.xorian.net/platforms/linux/debian/amd64 import
+  std_env = std_env.wheezy/checkout/1/8;
+  addons = [
+    cxx = std_env.wheezy/checkout/1/8/cxx.ves,
+  ];
+
+{
+  addons += [ libgtest ];
+  initial_dot = if _is_binding(.) then . else [];
+  // Build the basic environment.
+  pkg_ovs = [];
+  . = std_env()/env_build(addons, pkg_ovs);
+  . ++= initial_dot;
+
+  // Turn on C++11-ish compliance
+  . ++= [ Cxx/switches/compile/cxx11 = "-std=c++11" ];
+
+  // Turn on optimization
+  optimize_flag = <
+    // "-O2",
+    // "-DNDEBUG",
+  >;
+  optimize_switches = [ compile/optimize = optimize_flag,
+ 			program/optimize = optimize_flag ];
+  . ++= [ C/switches = optimize_switches,
+	  Cxx/switches = optimize_switches ];
+
+  // Turn on debug
+  debug_flag = <
+    "-g",
+    "-pg",
+  >;
+  debug_switches = [ compile/debug = debug_flag,
+		     program/debug = debug_flag ];
+  . ++= [ C/switches = debug_switches,
+	  Cxx/switches = debug_switches ];
+
+  return ./generic/eval_binding_vals(self());
+}

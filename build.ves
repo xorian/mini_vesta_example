@@ -1,0 +1,5 @@
+import
+  tests = src/tests.ves;
+{
+  return [ tests ];
+}

@@ -1,0 +1,12 @@
+files
+  common_H = [
+    bit_width.hpp,
+    matrix_state.hpp,
+  ];
+  test_MatrixState_C = [
+    test_MatrixState.C
+  ];
+{
+  libs = < ./libs/cxx/gtest, ./libs/c/clib_umb >;
+  return ./Cxx/program("test_MatrixState", test_MatrixState_C, common_H, libs);
+}
